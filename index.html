@@ -281,7 +281,14 @@ const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).
 
 const MONTHS = [9,10,11,12];
 const DOWK = ['일','월','화','수','목','금','토'];
-let state = {month:9, view:'cal', q:'', active:new Set(CATS.map(c=>c.k))};
+// 접속한 날의 달을 먼저 보여줌 (9월 이전·2026년 이전이면 9월, 12월 이후면 12월)
+function startMonth(){
+  const now=new Date(), y=now.getFullYear(), m=now.getMonth()+1;
+  if(y<2026 || (y===2026 && m<MONTHS[0])) return MONTHS[0];
+  if(y>2026 || m>MONTHS[MONTHS.length-1]) return MONTHS[MONTHS.length-1];
+  return m;
+}
+let state = {month:startMonth(), view:'cal', q:'', active:new Set(CATS.map(c=>c.k))};
 
 // index events by date
 const byDate = {};
